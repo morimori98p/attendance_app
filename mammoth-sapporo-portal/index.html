@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>マンモス札幌 ｜ 部活動ポータル</title>
+<link rel="icon" href="icon-mammoth.png">
+<style>
+/* ==========================================================
+   マンモス札幌 部活動ポータル
+   空の青 #12304A ／ 生成り #F5EEDF ／ 煉瓦色 #C4532F
+   ========================================================== */
+:root{
+  --sky-deep:#12304A;
+  --sky-mid:#1E486B;
+  --sky-pale:#A9C6DC;
+  --cream:#F5EEDF;
+  --brick:#C4532F;
+  --brick-dark:#A9421F;
+  --ink:#1A2A36;
+  --sub:#7A7263;
+  --faint:#9A9384;
+  --edge:#D6CDB8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{overflow-x:hidden;overflow-x:clip}
+body{
+  font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",YuGothic,Meiryo,sans-serif;
+  background:var(--sky-deep);color:var(--cream);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;   /* 土煙が画面外にはみ出しても横スクロールさせない */
+  overflow-x:clip;
+}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit}
+
+/* ── 細い白帯 ─────────────────── */
+.topbar{
+  background:#fff;color:var(--sky-deep);
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;padding:9px 20px;flex-wrap:wrap;
+}
+.topbar .name{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+.topbar .name img,.topbar .name svg{width:26px;height:26px;object-fit:contain;flex:none}
+.topbar .right{display:flex;align-items:center;gap:10px}
+.topbar .sub{font-size:12px;color:#6A8296}
+.tb-btn{
+  font-size:12px;padding:7px 15px;border:1px solid var(--sky-deep);
+  background:transparent;color:var(--sky-deep);cursor:pointer;
+}
+.tb-btn:hover{background:var(--sky-deep);color:#fff}
+.tb-btn.primary{background:var(--brick);border-color:var(--brick);color:#fff;font-weight:700}
+.tb-btn.primary:hover{background:var(--brick-dark);border-color:var(--brick-dark)}
+
+/* ── ヘッダー画像 ─────────────── */
+.hero{position:relative;overflow:hidden;background:#5DA9DD}
+.hero img,.hero .heroart{
+  display:block;width:100%;
+  height:clamp(240px,44vh,460px);
+  object-fit:cover;object-position:50% 42%;
+}
+.hero.has-img .heroart{display:none}
+.hero .title{position:absolute;left:0;bottom:0;padding:20px 24px 24px}
+.hero h1{
+  font-size:clamp(30px,6vw,52px);
+  font-weight:800;line-height:1.04;letter-spacing:-.03em;
+  color:#fff;text-shadow:5px 5px 0 var(--sky-deep);
+}
+.hero p{
+  margin-top:10px;font-size:clamp(12px,1.8vw,15px);
+  color:#fff;text-shadow:2px 2px 0 var(--sky-deep);
+}
+
+/* ── 操作行 ───────────────────── */
+.bar{
+  display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+  padding:18px 24px 0;max-width:1080px;margin:0 auto;
+}
+.chip{
+  font-size:13px;padding:7px 18px;
+  background:var(--sky-mid);color:var(--sky-pale);
+  border:none;cursor:pointer;
+}
+.chip .n{font-size:11px;opacity:.7;margin-left:7px}
+.chip:hover{background:#2A5A80;color:#fff}
+.chip.on{background:var(--brick);color:#fff}
+.chip.on:hover{background:var(--brick-dark)}
+.search{
+  margin-left:auto;flex:1 1 200px;min-width:180px;
+  background:#0C2438;border:none;color:var(--cream);font-size:13px;
+  padding:9px 14px;
+}
+.search::placeholder{color:#5C7A93}
+.search:focus{outline:2px solid var(--brick);outline-offset:0}
+
+.subbar{
+  display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+  padding:10px 24px 0;max-width:1080px;margin:0 auto;
+}
+.flow{display:contents}
+[hidden]{display:none !important}
+.tag-f{
+  font-size:11px;padding:4px 12px;background:transparent;
+  border:1px solid var(--sky-mid);color:#7E9BB4;cursor:pointer;
+}
+.tag-f:hover{border-color:var(--sky-pale);color:var(--sky-pale)}
+.tag-f.on{background:var(--brick);border-color:var(--brick);color:#fff}
+.sortsel{
+  margin-left:auto;background:#0C2438;border:none;color:var(--cream);
+  font-size:12px;padding:7px 10px;cursor:pointer;
+}
+.sortsel:focus{outline:2px solid var(--brick)}
+.count{font-size:12px;color:#6A8296;letter-spacing:.1em;white-space:nowrap}
+.clearf{
+  background:none;border:none;color:var(--brick);font-size:12px;
+  text-decoration:underline;cursor:pointer;padding:0 2px;
+}
+
+/* ── カード ───────────────────── */
+.grid{
+  display:grid;gap:10px;
+  grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+  padding:18px 24px 40px;max-width:1080px;margin:0 auto;
+}
+.card{
+  position:relative;background:var(--cream);color:var(--ink);
+  padding:18px;display:flex;flex-direction:column;
+}
+.card:hover{background:#fff}
+.cardlink{position:absolute;inset:0;z-index:1}
+.card > *:not(.cardlink){position:relative;z-index:2;pointer-events:none}
+.card .tools{pointer-events:auto}
+.meta{
+  font-size:11px;color:var(--brick);letter-spacing:.12em;
+  display:flex;align-items:center;gap:8px;margin-bottom:9px;
+  flex-wrap:wrap;
+}
+.new{background:var(--brick);color:var(--cream);padding:1px 7px;letter-spacing:0}
+.card h2{font-size:19px;font-weight:700;line-height:1.35}
+.card .note{font-size:12px;color:var(--sub);margin-top:7px;line-height:1.7}
+.tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}
+.tag{font-size:10px;border:1px solid var(--edge);color:var(--sub);padding:2px 9px}
+.card .path{
+  font-size:10px;color:var(--faint);margin-top:10px;word-break:break-all;
+  font-family:ui-monospace,Menlo,Consolas,monospace;
+}
+.card .by{font-size:11px;color:var(--faint);margin-top:auto;padding-top:14px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px}
+.tools{display:flex;gap:4px;flex:none;opacity:0;transition:opacity .12s;z-index:3}
+.card:hover .tools,.card:focus-within .tools{opacity:1}
+.tools button{
+  font-size:10px;padding:3px 8px;border:1px solid var(--edge);
+  background:var(--cream);color:var(--sub);cursor:pointer;
+}
+.tools button:hover{background:var(--brick);border-color:var(--brick);color:#fff}
+
+/* ── ドスン、と土煙 ───────────── */
+.card:hover,.card:focus-within{z-index:5}
+.card:hover,.card:focus-within{animation:stomp .5s cubic-bezier(.3,1.3,.5,1) both}
+@keyframes stomp{
+  0%{transform:translateY(-2px)}
+  22%{transform:translateY(4px)}
+  46%{transform:translateY(0)}
+  62%{transform:translateY(1.5px)}
+  100%{transform:translateY(0)}
+}
+.card .dust{
+  position:absolute;left:0;right:0;bottom:0;height:0;
+  z-index:1;pointer-events:none;
+}
+.card .dust::before{           /* 接地の衝撃。カード下の隙間に走る */
+  content:"";position:absolute;left:50%;bottom:-7px;width:90px;height:9px;
+  border-radius:50%;background:rgba(245,238,223,.6);opacity:0;
+  transform:translateX(-50%) scaleX(.15);
+}
+.card .dust i{
+  position:absolute;bottom:-3px;width:var(--s);height:var(--s);
+  border-radius:50%;background:var(--dc);opacity:0;filter:blur(1.5px);
+}
+.card .dust i:nth-child(-n+6){left:-6px;transform:translate(-50%,6px) scale(.2)}
+.card .dust i:nth-child(n+7) {right:-6px;transform:translate(50%,6px) scale(.2)}
+.card:hover .dust::before,.card:focus-within .dust::before{animation:shock .5s ease-out .08s both}
+.card:hover .dust i:nth-child(-n+6),.card:focus-within .dust i:nth-child(-n+6){
+  animation:puffL var(--d) cubic-bezier(.14,.66,.28,1) var(--dl) both}
+.card:hover .dust i:nth-child(n+7),.card:focus-within .dust i:nth-child(n+7){
+  animation:puffR var(--d) cubic-bezier(.14,.66,.28,1) var(--dl) both}
+@keyframes shock{
+  0%  {transform:translateX(-50%) scaleX(.15);opacity:0}
+  18% {opacity:.75}
+  100%{transform:translateX(-50%) scaleX(8);opacity:0}
+}
+@keyframes puffL{
+  0%  {transform:translate(-50%,6px) scale(.15);opacity:0}
+  14% {opacity:1}
+  55% {opacity:.8}
+  100%{transform:translate(calc(-50% - var(--x)),var(--y)) scale(1);opacity:0}
+}
+@keyframes puffR{
+  0%  {transform:translate(50%,6px) scale(.15);opacity:0}
+  14% {opacity:1}
+  55% {opacity:.8}
+  100%{transform:translate(calc(50% + var(--x)),var(--y)) scale(1);opacity:0}
+}
+/* 左足元 */
+.card .dust i:nth-child(1){--x:10px; --y:-24px;--s:40px;--d:.85s; --dl:.06s;--dc:rgba(158,140,110,.60)}
+.card .dust i:nth-child(2){--x:44px; --y:-52px;--s:28px;--d:.95s; --dl:.12s;--dc:rgba(196,83,47,.32)}
+.card .dust i:nth-child(3){--x:78px; --y:-22px;--s:22px;--d:.88s; --dl:.18s;--dc:rgba(158,140,110,.50)}
+.card .dust i:nth-child(4){--x:26px; --y:-76px;--s:18px;--d:1.05s;--dl:.24s;--dc:rgba(158,140,110,.42)}
+.card .dust i:nth-child(5){--x:104px;--y:-44px;--s:15px;--d:.98s; --dl:.28s;--dc:rgba(158,140,110,.36)}
+.card .dust i:nth-child(6){--x:58px; --y:-8px; --s:26px;--d:.80s; --dl:.10s;--dc:rgba(158,140,110,.45)}
+/* 右足元 */
+.card .dust i:nth-child(7) {--x:12px; --y:-26px;--s:42px;--d:.88s; --dl:.05s;--dc:rgba(158,140,110,.60)}
+.card .dust i:nth-child(8) {--x:50px; --y:-46px;--s:26px;--d:.98s; --dl:.13s;--dc:rgba(196,83,47,.30)}
+.card .dust i:nth-child(9) {--x:84px; --y:-20px;--s:20px;--d:.86s; --dl:.19s;--dc:rgba(158,140,110,.50)}
+.card .dust i:nth-child(10){--x:30px; --y:-80px;--s:17px;--d:1.08s;--dl:.25s;--dc:rgba(158,140,110,.42)}
+.card .dust i:nth-child(11){--x:110px;--y:-38px;--s:14px;--d:1.00s;--dl:.30s;--dc:rgba(158,140,110,.36)}
+.card .dust i:nth-child(12){--x:64px; --y:-10px;--s:24px;--d:.82s; --dl:.09s;--dc:rgba(158,140,110,.45)}
+@media (prefers-reduced-motion:reduce){
+  .card:hover,.card:focus-within{animation:none}
+  .card:hover .dust i,.card:focus-within .dust i,
+  .card:hover .dust::before,.card:focus-within .dust::before{animation:none;opacity:0}
+}
+
+.empty{
+  grid-column:1/-1;border:1px dashed var(--sky-mid);
+  padding:56px 20px;text-align:center;
+}
+.empty p{font-size:16px;font-weight:700;color:var(--cream);margin-bottom:8px}
+.empty small{font-size:12px;color:#6A8296}
+
+/* ── 岩なだれ（ページ遷移） ───── */
+.slide-ov{position:fixed;inset:-26px;z-index:999;overflow:hidden;cursor:wait;
+  animation:quake .46s cubic-bezier(.36,.07,.19,.97) both}
+@keyframes quake{
+  0%,100%{transform:translate(0,0)}
+  12%{transform:translate(-3px,2px)}  28%{transform:translate(3px,-2px)}
+  44%{transform:translate(-2px,-1px)} 62%{transform:translate(2px,2px)}
+  80%{transform:translate(-1px,0)}
+}
+.slide-veil{position:absolute;inset:0;background:#0B2032;opacity:0;z-index:1;
+  animation:veil 1s ease-in both}
+@keyframes veil{0%{opacity:0} 30%{opacity:.5} 55%{opacity:1} 100%{opacity:1}}
+.rock{
+  position:absolute;top:0;z-index:2;width:var(--sz);height:var(--sz);
+  background:var(--rc);clip-path:var(--shape);
+  transform:translate3d(0,-26vh,0);
+  animation:fall var(--dur) cubic-bezier(.32,.04,.72,.48) var(--dl) both;
+}
+.rock.r0{--shape:polygon(48% 2%,90% 22%,100% 66%,66% 98%,20% 92%,0 52%,12% 16%)}
+.rock.r1{--shape:polygon(30% 0,88% 10%,100% 54%,74% 94%,26% 100%,4% 62%)}
+.rock.r2{--shape:polygon(52% 0,100% 34%,84% 82%,40% 100%,0 70%,8% 24%)}
+.rock.r3{--shape:polygon(20% 6%,72% 0,100% 44%,88% 90%,34% 96%,0 58%)}
+.rock.r4{--shape:polygon(44% 4%,96% 30%,92% 78%,52% 100%,6% 76%,0 30%)}
+.rock.r5{--shape:polygon(38% 0,100% 26%,78% 70%,96% 96%,28% 92%,2% 46%)}
+@keyframes fall{
+  0%  {transform:translate3d(0,-26vh,0) rotate(0deg)}
+  100%{transform:translate3d(var(--dx),122vh,0) rotate(var(--rot))}
+}
+.haze{
+  position:absolute;top:0;z-index:2;width:var(--sz);height:var(--sz);
+  border-radius:50%;background:var(--rc);filter:blur(10px);
+  transform:translate3d(0,-30vh,0);
+  animation:fall var(--dur) linear var(--dl) both;
+}
+@media (prefers-reduced-motion:reduce){ .slide-ov{display:none} }
+
+/* ── 使い方・footer ───────────── */
+.howto{max-width:1080px;margin:0 auto;padding:0 24px}
+.howto details{border-top:1px solid var(--sky-mid);padding:16px 0}
+.howto summary{cursor:pointer;list-style:none;font-size:13px;color:var(--sky-pale)}
+.howto summary::-webkit-details-marker{display:none}
+.howto summary::before{content:"＋ ";color:var(--brick)}
+.howto details[open] summary::before{content:"− ";color:var(--brick)}
+.howto .inner{font-size:12.5px;color:#8FA9BE;line-height:1.95;max-width:760px;margin-top:12px}
+.howto ol{padding-left:1.3em;margin:.3em 0}
+.howto li{margin-bottom:.35em}
+.howto code{background:#0C2438;color:var(--sky-pale);padding:1px 6px;
+  font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px}
+.howto strong{color:var(--brick)}
+footer{
+  border-top:1px solid var(--sky-mid);
+  padding:20px 24px 40px;max-width:1080px;margin:0 auto;
+  font-size:12px;color:#6A8296;line-height:1.9;
+}
+
+/* ── モーダル ─────────────────── */
+.veil{position:fixed;inset:0;background:rgba(6,20,32,.72);display:none;
+  align-items:flex-start;justify-content:center;padding:34px 14px;overflow:auto;z-index:60}
+.veil.on{display:flex}
+.pane{background:var(--cream);color:var(--ink);width:100%;max-width:580px}
+.pane-h{background:var(--sky-deep);color:#fff;padding:15px 22px;
+  display:flex;justify-content:space-between;align-items:center}
+.pane-h h2{font-size:16px;font-weight:700;letter-spacing:.04em}
+.pane-h .x{background:none;border:none;color:#8FA9BE;font-size:20px;line-height:1;cursor:pointer;padding:2px 4px}
+.pane-h .x:hover{color:#fff}
+.pane-b{padding:20px 22px 4px}
+.pane-f{padding:12px 22px 22px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.fld{margin-bottom:15px}
+.fld label{display:block;font-size:11px;color:var(--sub);letter-spacing:.12em;margin-bottom:5px}
+.fld label .req{color:var(--brick);margin-left:6px}
+.fld input,.fld textarea,.fld select{
+  width:100%;background:#fff;border:1px solid var(--edge);
+  padding:9px 12px;font-size:13.5px;color:var(--ink);
+}
+.fld input:focus,.fld textarea:focus,.fld select:focus{outline:2px solid var(--brick);outline-offset:-1px;border-color:var(--brick)}
+.fld textarea{resize:vertical;min-height:62px;line-height:1.7}
+.fld .hint{font-size:11px;color:var(--faint);margin-top:5px;line-height:1.7}
+.fld .hint code,.callout code{background:#EBE2CE;padding:1px 5px;
+  font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px}
+/* 既存タグから選ぶ */
+.pick{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.pick button{
+  font-size:11.5px;padding:4px 11px;border:1px solid var(--edge);
+  background:#fff;color:var(--sub);cursor:pointer;
+}
+.pick button:hover{border-color:var(--brick);color:var(--brick)}
+.pick button.on{background:var(--brick);border-color:var(--brick);color:#fff}
+.pick button .n{font-size:9.5px;opacity:.65;margin-left:6px}
+.pick .none{font-size:11.5px;color:var(--faint);line-height:1.7}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:520px){.two{grid-template-columns:1fr}}
+.err{background:#F6DED6;color:var(--brick-dark);border-left:3px solid var(--brick);
+  padding:9px 13px;font-size:12.5px;margin-bottom:14px;display:none}
+.err.on{display:block}
+.callout{background:#EDE4D2;border-left:3px solid var(--sky-deep);
+  padding:12px 14px;font-size:12.5px;color:var(--sub);line-height:1.85;margin-bottom:16px}
+.mbtn{font-size:13px;padding:9px 20px;border:1px solid var(--sky-deep);
+  background:transparent;color:var(--sky-deep);cursor:pointer}
+.mbtn:hover{background:var(--sky-deep);color:#fff}
+.mbtn.primary{background:var(--brick);border-color:var(--brick);color:#fff;font-weight:700}
+.mbtn.primary:hover{background:var(--brick-dark);border-color:var(--brick-dark)}
+.mbtn.danger{border-color:var(--brick);color:var(--brick)}
+.mbtn.danger:hover{background:var(--brick);color:#fff}
+.mbtn.sm{font-size:12px;padding:7px 15px}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;line-height:1.6}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(12px);
+  background:var(--brick);color:#fff;padding:11px 26px;font-size:13px;
+  opacity:0;transition:.2s;pointer-events:none;z-index:90}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="name" id="brand">
+    <svg viewBox="0 0 40 40" aria-hidden="true"><g fill="#12304A">
+      <ellipse cx="23" cy="18" rx="12" ry="9.5"/>
+      <ellipse cx="11.5" cy="20" rx="7" ry="7.5"/>
+      <path d="M6 23 c-2.6 3.2 -2.2 8 .6 10.2 1.5 1.2 3.6 .4 3.2 -1.4 -.3 -1.4 -1.6 -1.4 -1.9 -3 -.3 -1.7 .6 -3.4 1.6 -4.6z"/>
+      <rect x="15" y="25" width="4" height="9"/><rect x="21" y="26" width="4" height="8"/>
+      <rect x="27" y="25" width="4" height="9"/>
+    </g>
+    <path d="M6.5 24 c-2.4 1.6 -3.4 4.6 -2.4 6.6" stroke="#F5EEDF" stroke-width="2" fill="none" stroke-linecap="round"/>
+    </svg>マンモス札幌</span>
+  <span class="right">
+    <span class="sub">部活動ポータル</span>
+    <button class="tb-btn primary" id="btnAdd">＋ リンクを追加</button>
+    <button class="tb-btn" id="btnExport">書き出し</button>
+  </span>
+</div>
+
+<div class="hero" id="hero">
+  <img src="header-mammoth.png" alt="青空の丘を歩く大きなマンモス"
+       onload="document.getElementById('hero').classList.add('has-img')"
+       onerror="this.remove()">
+  <svg class="heroart" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#4E9BD4"/><stop offset="62%" stop-color="#8FC6E8"/>
+        <stop offset="100%" stop-color="#C9E2F2"/>
+      </linearGradient>
+    </defs>
+    <rect width="1200" height="300" fill="url(#sky)"/>
+    <!-- 雲 -->
+    <g fill="#F5EEDF" opacity=".8">
+      <ellipse cx="196" cy="52" rx="62" ry="20"/><ellipse cx="158" cy="46" rx="38" ry="17"/><ellipse cx="234" cy="45" rx="40" ry="16"/>
+      <ellipse cx="962" cy="38" rx="52" ry="17"/><ellipse cx="930" cy="33" rx="30" ry="14"/>
+      <ellipse cx="430" cy="88" rx="40" ry="12"/>
+    </g>
+    <!-- 遠い丘 -->
+    <path d="M0 178 C 170 150 330 192 500 174 S 860 136 1040 166 S 1160 178 1200 170 L1200 300 L0 300 Z" fill="#7FA36A"/>
+    <!-- マンモス -->
+    <g transform="translate(590 69) scale(0.583)">
+      <!-- 脚 -->
+      <g fill="#0E2739">
+        <path d="M300 232 h44 v104 q0 8 -8 8 h-28 q-8 0 -8 -8z"/>
+        <path d="M362 226 h42 v110 q0 8 -8 8 h-26 q-8 0 -8 -8z"/>
+      </g>
+      <!-- 胴 -->
+      <path fill="#12304A" d="M158 168
+        C154 96 206 48 274 48
+        C348 48 406 92 410 158
+        C414 208 396 244 372 258
+        L186 258
+        C164 240 160 200 158 168 Z"/>
+      <!-- しっぽ -->
+      <path fill="none" stroke="#12304A" stroke-width="11" stroke-linecap="round"
+            d="M404 168 c20 10 22 38 10 56"/>
+      <!-- 手前の脚 -->
+      <g fill="#12304A">
+        <path d="M186 240 h46 v100 q0 8 -8 8 h-30 q-8 0 -8 -8z"/>
+        <path d="M252 244 h44 v96 q0 8 -8 8 h-28 q-8 0 -8 -8z"/>
+      </g>
+      <!-- 頭 -->
+      <path fill="#12304A" d="M96 178
+        C88 110 122 70 172 70
+        C214 70 240 104 242 152
+        C244 196 226 232 196 240
+        C154 250 104 232 96 178 Z"/>
+      <!-- 耳 -->
+      <ellipse cx="196" cy="150" rx="30" ry="38" fill="#1E486B"/>
+      <!-- 鼻（トランク） -->
+      <path fill="#12304A" d="M104 200
+        C 76 226 62 276 74 314
+        C 82 340 116 350 130 330
+        C 138 318 130 304 118 308
+        C 106 312 96 302 98 286
+        C 102 254 118 226 142 210 Z"/>
+      <!-- 牙 -->
+      <g fill="none" stroke="#F5EEDF" stroke-width="12" stroke-linecap="round">
+        <path d="M118 214 C 82 240 68 288 96 306"/>
+        <path d="M158 226 C 132 248 124 284 142 300"/>
+      </g>
+      <!-- 目 -->
+      <circle cx="146" cy="146" r="8" fill="#F5EEDF"/>
+    </g>
+    <!-- 近い丘 -->
+    <path d="M0 238 C 210 212 400 262 620 240 S 1000 212 1200 242 L1200 300 L0 300 Z" fill="#5B8049"/>
+  </svg>
+  <div class="title">
+    <h1 id="siteTitle">マンモス札幌</h1>
+    <p id="siteSub">みんなが作ったもの、ぜんぶここに集まる。</p>
+  </div>
+</div>
+
+<div class="bar">
+  <span id="catChips" class="flow"></span>
+  <input class="search" id="q" type="search" placeholder="タイトル・作った人で探す" autocomplete="off">
+</div>
+
+<div class="subbar">
+  <span id="tagChips" class="flow"></span>
+  <button class="clearf" id="clearF" hidden>絞り込みを外す</button>
+  <select class="sortsel" id="sort">
+    <option value="new">新しい順</option>
+    <option value="old">古い順</option>
+    <option value="title">タイトル順</option>
+    <option value="author">作った人順</option>
+  </select>
+  <span class="count" id="count"></span>
+</div>
+
+<div class="grid" id="list"></div>
+
+<div class="howto">
+  <details>
+    <summary>このポータルの使い方</summary>
+    <div class="inner">
+      <ol>
+        <li>作った HTML ファイルを、<code>index.html</code> と<strong>同じフォルダの <code>files</code></strong> に入れる</li>
+        <li>右上「＋ リンクを追加」から、タイトルとファイル名（例：<code>./files/tool.html</code>）を書く</li>
+        <li>追加したものは、まず<strong>この端末のブラウザだけ</strong>に保存されます</li>
+        <li>みんなに配るときは「書き出し」→「data.js を保存」で、フォルダの <code>data.js</code> と差し替える</li>
+        <li>受け取った人は <code>index.html</code> を開くだけ。全員分が見られます</li>
+      </ol>
+      <p style="margin-top:12px">※ <code>data.js</code> を差し替えたあとは「この端末の保存分を消す」を押すと、二重に出ません。</p>
+      <p>※ ZIP にまとめて配るときは、フォルダ名・ファイル名を<strong>半角英数</strong>に。日本語名のままだと解凍時に文字化けすることがあります。</p>
+      <p>※ <code>header-mammoth.png</code> と <code>icon-mammoth.png</code> をこのフォルダに置くと、ヘッダー画像とアイコンがその画像に差し替わります。無い間は下の絵で表示されます。</p>
+      <p style="margin-top:10px">※ キーボードの <code>/</code> で検索欄に移動できます。</p>
+    </div>
+  </details>
+</div>
+
+<footer id="foot"></footer>
+
+<!-- ============ 追加・編集 ============ -->
+<div class="veil" id="veilEdit">
+  <div class="pane" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+    <div class="pane-h">
+      <h2 id="editTitle">リンクを追加</h2>
+      <button class="x" data-close="veilEdit" aria-label="閉じる">&times;</button>
+    </div>
+    <div class="pane-b">
+      <p class="err" id="err"></p>
+      <div class="fld">
+        <label for="f_title">タイトル<span class="req">必須</span></label>
+        <input id="f_title" type="text" placeholder="例：夏合宿の記録">
+      </div>
+      <div class="fld">
+        <label for="f_href">リンク先<span class="req">必須</span></label>
+        <input id="f_href" type="text" placeholder="./files/gasshuku.html">
+        <div class="hint">同じフォルダに置いたファイル名を <code>./</code> から書きます。<code>https://</code> で始まる URL も使えます。</div>
+      </div>
+      <div class="two">
+        <div class="fld">
+          <label for="f_cat">カテゴリ</label>
+          <select id="f_cat"></select>
+        </div>
+        <div class="fld">
+          <label for="f_newcat">カテゴリを新しく作る</label>
+          <input id="f_newcat" type="text" placeholder="空欄でOK">
+        </div>
+      </div>
+      <div class="two">
+        <div class="fld">
+          <label for="f_author">作った人</label>
+          <input id="f_author" type="text" placeholder="例：森山">
+        </div>
+        <div class="fld">
+          <label for="f_date">日付</label>
+          <input id="f_date" type="date">
+        </div>
+      </div>
+      <div class="fld">
+        <label for="f_tags">タグ</label>
+        <input id="f_tags" type="text" placeholder="読点・空白・カンマ区切り　例：AI, 入門">
+        <div class="pick" id="f_tagpick"></div>
+        <div class="hint">下のタグを押すと出し入れできます。新しいタグは上の欄に直接書いてください。</div>
+      </div>
+      <div class="fld">
+        <label for="f_desc">ひとこと</label>
+        <textarea id="f_desc" placeholder="どんなものか、一行で。"></textarea>
+      </div>
+    </div>
+    <div class="pane-f">
+      <button class="mbtn" data-close="veilEdit">やめる</button>
+      <button class="mbtn primary" id="btnSave">追加する</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 書き出し・取り込み ============ -->
+<div class="veil" id="veilExport">
+  <div class="pane" role="dialog" aria-modal="true" aria-labelledby="expTitle">
+    <div class="pane-h">
+      <h2 id="expTitle">書き出し・取り込み</h2>
+      <button class="x" data-close="veilExport" aria-label="閉じる">&times;</button>
+    </div>
+    <div class="pane-b">
+      <div class="callout">
+        いま画面に出ている全件を <code>data.js</code> として書き出します。フォルダの <code>data.js</code> と差し替えれば、次に開いた人にもそのまま見えます。
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px">
+        <button class="mbtn primary sm" id="btnDownload">data.js を保存</button>
+        <button class="mbtn sm" id="btnCopy">本文をコピー</button>
+        <button class="mbtn danger sm" id="btnClear">この端末の保存分を消す</button>
+      </div>
+      <div class="fld">
+        <label for="f_dump">本文（貼り付けて取り込むこともできます）</label>
+        <textarea id="f_dump" class="mono" style="min-height:175px"></textarea>
+        <div class="hint">他の人の <code>data.js</code> の中身をここに貼って「取り込む」を押すと、いまの一覧に合流します（同じタイトル・リンク先は重複しません）。</div>
+      </div>
+    </div>
+    <div class="pane-f">
+      <button class="mbtn" data-close="veilExport">閉じる</button>
+      <button class="mbtn primary" id="btnImport">取り込む</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- 共有データ。無ければ下の既定値で動きます。 -->
+<script src="data.js"></script>
+<script>
+(function(){
+"use strict";
+
+var DEFAULT_DATA = {
+  site: { title:"マンモス札幌", subtitle:"みんなが作ったもの、ぜんぶここに集まる。" },
+  categories: ["成果物・作品","議事録・活動記録"],
+  items: []
+};
+var STORE_KEY = "mammoth-sapporo-portal-v1";
+
+var base  = (window.PORTAL_DATA && typeof window.PORTAL_DATA === "object") ? window.PORTAL_DATA : DEFAULT_DATA;
+var local = loadLocal();
+var state = { cat:null, tag:null, q:"", sort:"new", editingId:null };
+
+function loadLocal(){
+  try{
+    var raw = localStorage.getItem(STORE_KEY);
+    if(!raw) return { items:[], categories:[], removed:[] };
+    var o = JSON.parse(raw);
+    return {
+      items: Array.isArray(o.items)?o.items:[],
+      categories: Array.isArray(o.categories)?o.categories:[],
+      removed: Array.isArray(o.removed)?o.removed:[]
+    };
+  }catch(e){ return { items:[], categories:[], removed:[] }; }
+}
+function saveLocal(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(local)); }
+  catch(e){ toast("この端末に保存できませんでした"); }
+}
+function allItems(){
+  var out = [], seen = {};
+  (base.items||[]).forEach(function(it){
+    if(local.removed.indexOf(it.id) >= 0) return;
+    out.push(it); seen[it.id] = out.length - 1;
+  });
+  local.items.forEach(function(it){
+    if(seen[it.id] !== undefined) out[seen[it.id]] = it;
+    else out.push(it);
+  });
+  return out;
+}
+function allCategories(){
+  var seed = (base.categories||[]).concat(local.categories||[]);
+  allItems().forEach(function(it){ if(it.category) seed.push(it.category); });
+  return uniq(seed);
+}
+function uniq(a){ var s=[],m={}; a.forEach(function(v){ if(v&&!m[v]){m[v]=1;s.push(v);} }); return s; }
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+function today(){ var d=new Date(),p=function(n){return(n<10?"0":"")+n;};
+  return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate()); }
+function shortDate(s){ var m=String(s||"").match(/(\d{4})-(\d{2})-(\d{2})/);
+  return m ? m[2]+"."+m[3] : String(s||""); }
+function fullDate(s){ var m=String(s||"").match(/(\d{4})-(\d{2})-(\d{2})/);
+  return m ? m[1]+"."+m[2]+"."+m[3] : String(s||""); }
+function daysAgo(s){ var t=Date.parse(s); if(isNaN(t)) return 9999;
+  return Math.floor((Date.now()-t)/86400000); }
+function isBase(id){ return (base.items||[]).some(function(x){ return x.id === id; }); }
+
+/* 入力欄の文字列 → タグの配列。
+   # と重複を落とし、大文字小文字だけが違うものは既存の綴りに寄せる */
+function parseTags(str){
+  var known = {};
+  Object.keys(tagCounts()).forEach(function(k){ known[k.toLowerCase()] = k; });
+  var out = [], seen = {};
+  String(str||"").split(/[,、\s]+/).forEach(function(s){
+    s = s.replace(/^#/,"").trim();
+    if(!s) return;
+    var c = known[s.toLowerCase()] || s;
+    var k = c.toLowerCase();
+    if(!seen[k]){ seen[k] = 1; out.push(c); }
+  });
+  return out;
+}
+/* いま使われているタグと、その件数 */
+function tagCounts(){
+  var m = {};
+  allItems().forEach(function(it){ (it.tags||[]).forEach(function(t){ m[t] = (m[t]||0)+1; }); });
+  return m;
+}
+
+var $ = function(id){ return document.getElementById(id); };
+
+function filtered(){
+  var q = state.q.trim().toLowerCase();
+  var arr = allItems().filter(function(it){
+    if(state.cat && it.category !== state.cat) return false;
+    if(state.tag && (it.tags||[]).indexOf(state.tag) < 0) return false;
+    if(q){
+      var hay = [it.title,it.desc,it.author,it.category,(it.tags||[]).join(" "),it.href].join(" ").toLowerCase();
+      if(hay.indexOf(q) < 0) return false;
+    }
+    return true;
+  });
+  arr.sort(function(a,b){
+    switch(state.sort){
+      case "old":    return String(a.date||"").localeCompare(String(b.date||""));
+      case "title":  return String(a.title||"").localeCompare(String(b.title||""),"ja");
+      case "author": return String(a.author||"").localeCompare(String(b.author||""),"ja")
+                          || String(b.date||"").localeCompare(String(a.date||""));
+      default:       return String(b.date||"").localeCompare(String(a.date||""));
+    }
+  });
+  return arr;
+}
+
+function render(){
+  $("siteTitle").textContent = (base.site && base.site.title) || "部活動ポータル";
+  $("siteSub").textContent   = (base.site && base.site.subtitle) || "";
+  document.title = ((base.site&&base.site.title)||"部活動ポータル") + " ｜ 部活動ポータル";
+
+  var items = filtered(), all = allItems();
+
+  /* カテゴリ（チップ） */
+  var counts = {};
+  all.forEach(function(it){ counts[it.category] = (counts[it.category]||0)+1; });
+  var chips = '<button class="chip '+(state.cat===null?"on":"")+'" data-cat="">すべて<span class="n">'+all.length+'</span></button>';
+  allCategories().forEach(function(c){
+    chips += '<button class="chip '+(state.cat===c?"on":"")+'" data-cat="'+esc(c)+'">'
+           + esc(c)+'<span class="n">'+(counts[c]||0)+'</span></button>';
+  });
+  $("catChips").innerHTML = chips;
+
+  /* タグ */
+  var tags = {};
+  all.forEach(function(it){ (it.tags||[]).forEach(function(t){ tags[t]=(tags[t]||0)+1; }); });
+  var tkeys = Object.keys(tags).sort(function(a,b){ return tags[b]-tags[a] || a.localeCompare(b,"ja"); });
+  $("tagChips").innerHTML = tkeys.map(function(t){
+    return '<button class="tag-f '+(state.tag===t?"on":"")+'" data-tag="'+esc(t)+'">'+esc(t)+'</button>';
+  }).join("");
+  $("clearF").hidden = !(state.cat || state.tag || state.q);
+  $("count").textContent = items.length + " 件";
+
+  /* カード */
+  if(!items.length){
+    $("list").innerHTML = '<div class="empty"><p>'
+      + (all.length ? "見つかりませんでした" : "まだ1件もありません")
+      + '</p><small>'
+      + (all.length ? "検索のことばや絞り込みを変えてみてください。" : "右上の「＋ リンクを追加」から、最初の1件をどうぞ。")
+      + '</small></div>';
+  } else {
+    $("list").innerHTML = items.map(function(it){
+      var isNew = daysAgo(it.date) <= 14;
+      var tagHtml = (it.tags||[]).map(function(t){ return '<span class="tag">'+esc(t)+'</span>'; }).join("");
+      var external = /^https?:\/\//i.test(it.href||"");
+      var who = String(it.author||"").trim() || "名前なし";
+      return '<article class="card">'
+        + '<a class="cardlink" href="'+esc(it.href||"#")+'"'+(external?' target="_blank" rel="noopener"':'')
+        +   ' aria-label="'+esc(it.title)+'"></a>'
+        + '<div class="meta">'+esc(it.category||"未分類")+(isNew?'<span class="new">NEW</span>':'')+'</div>'
+        + '<h2>'+esc(it.title)+'</h2>'
+        + (it.desc ? '<p class="note">'+esc(it.desc)+'</p>' : '')
+        + (tagHtml ? '<div class="tags">'+tagHtml+'</div>' : '')
+        + '<div class="path">'+esc(it.href||"")+'</div>'
+        + '<div class="by"><span>'+esc(who)+' ／ '+esc(shortDate(it.date))+'</span>'
+        +   '<span class="tools">'
+        +     '<button data-edit="'+esc(it.id)+'">直す</button>'
+        +     '<button data-del="'+esc(it.id)+'">消す</button>'
+        +   '</span></div>'
+        + '<span class="dust" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>'
+        + '</article>';
+    }).join("");
+  }
+
+  $("foot").innerHTML = 'マンモス札幌 部活動ポータル ／ いま ' + all.length + ' 件 ／ 最終更新 ' + fullDate(latestDate(all)) + '<br>'
+    + '追加したものはこの端末に保存されます。みんなに配るときは「書き出し」から <code style="font-family:inherit">data.js</code> を差し替えてください。';
+}
+function latestDate(arr){
+  var d = ""; arr.forEach(function(it){ if(String(it.date||"") > d) d = String(it.date); });
+  return d || today();
+}
+/* ---------------- 操作 ---------------- */
+$("q").addEventListener("input", function(){ state.q = this.value; render(); });
+$("sort").addEventListener("change", function(){ state.sort = this.value; render(); });
+
+document.addEventListener("click", function(e){
+  var t = e.target.closest ? e.target.closest("button") : null;
+  if(!t) return;
+  if(t.hasAttribute("data-cat")){ state.cat = t.getAttribute("data-cat") || null; render(); return; }
+  if(t.hasAttribute("data-tag")){
+    var v = t.getAttribute("data-tag");
+    state.tag = (state.tag === v) ? null : v; render(); return;
+  }
+  if(t.hasAttribute("data-pick")){ togglePickTag(t.getAttribute("data-pick")); return; }
+  if(t.id === "clearF"){ state.cat=null; state.tag=null; state.q=""; $("q").value=""; render(); return; }
+  if(t.hasAttribute("data-edit")){ e.preventDefault(); openEdit(t.getAttribute("data-edit")); return; }
+  if(t.hasAttribute("data-del")){ e.preventDefault(); removeItem(t.getAttribute("data-del")); return; }
+  if(t.hasAttribute("data-close")){ closeVeil($(t.getAttribute("data-close"))); return; }
+});
+document.addEventListener("keydown", function(e){
+  if(e.key === "Escape"){ document.querySelectorAll(".veil.on").forEach(closeVeil); }
+  if(e.key === "/" && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA"){
+    e.preventDefault(); $("q").focus();
+  }
+});
+document.querySelectorAll(".veil").forEach(function(v){
+  v.addEventListener("mousedown", function(e){ if(e.target === v) closeVeil(v); });
+});
+function openVeil(v){ v.classList.add("on"); }
+function closeVeil(v){ v.classList.remove("on"); }
+
+$("btnAdd").addEventListener("click", function(){ openEdit(null); });
+
+function openEdit(id){
+  state.editingId = id;
+  var it = id ? allItems().filter(function(x){ return x.id===id; })[0] : null;
+  $("editTitle").textContent = it ? "内容を直す" : "リンクを追加";
+  $("err").className = "err";
+
+  var sel = $("f_cat"), cats = allCategories();
+  sel.innerHTML = cats.map(function(c){ return '<option value="'+esc(c)+'">'+esc(c)+'</option>'; }).join("")
+                + '<option value="未分類">未分類</option>';
+  sel.value = (it && it.category) || (state.cat || cats[0] || "未分類");
+
+  $("f_title").value  = it ? (it.title||"")  : "";
+  $("f_href").value   = it ? (it.href||"")   : "./files/";
+  $("f_author").value = it ? (it.author||"") : lastAuthor();
+  $("f_date").value   = it ? (it.date||today()) : today();
+  $("f_tags").value   = it ? (it.tags||[]).join("、") : "";
+  $("f_desc").value   = it ? (it.desc||"")   : "";
+  $("f_newcat").value = "";
+
+  renderTagPicker();
+  openVeil($("veilEdit"));
+  setTimeout(function(){ $("f_title").focus(); }, 30);
+}
+
+/* 既存タグの一覧を出す。入力欄に入っているものは押された状態にする */
+function renderTagPicker(){
+  var box = $("f_tagpick");
+  if(!box) return;
+  var cur = parseTags($("f_tags").value), m = tagCounts();
+  var keys = Object.keys(m).sort(function(a,b){
+    return m[b] - m[a] || a.localeCompare(b,"ja");
+  });
+  if(!keys.length){
+    box.innerHTML = '<span class="none">まだタグがありません。上の欄に書くと新しく作れます。</span>';
+    return;
+  }
+  box.innerHTML = keys.map(function(t){
+    return '<button type="button" class="'+(cur.indexOf(t) >= 0 ? "on" : "")+'"'
+         + ' data-pick="'+esc(t)+'">'+esc(t)+'<span class="n">'+m[t]+'</span></button>';
+  }).join("");
+}
+function togglePickTag(t){
+  var cur = parseTags($("f_tags").value);
+  var i = cur.indexOf(t);
+  if(i >= 0) cur.splice(i,1); else cur.push(t);
+  $("f_tags").value = cur.join("、");
+  renderTagPicker();
+}
+$("f_tags").addEventListener("input", renderTagPicker);
+
+function lastAuthor(){
+  try{ return localStorage.getItem(STORE_KEY+"-author") || ""; }catch(e){ return ""; }
+}
+
+$("btnSave").addEventListener("click", function(){
+  var title = $("f_title").value.trim();
+  var href  = $("f_href").value.trim();
+  if(!title) return fail("タイトルを入れてください。");
+  if(!href || href === "./" || href === "./files/") return fail("リンク先を入れてください。（例：./files/tool.html）");
+
+  var newcat = $("f_newcat").value.trim();
+  var cat = newcat || $("f_cat").value;
+  if(newcat && local.categories.indexOf(newcat) < 0 && (base.categories||[]).indexOf(newcat) < 0){
+    local.categories.push(newcat);
+  }
+  var tags = parseTags($("f_tags").value);
+
+  var item = {
+    id: state.editingId || ("m-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2,6)),
+    title: title, href: href, category: cat,
+    author: $("f_author").value.trim(),
+    date: $("f_date").value || today(),
+    tags: tags, desc: $("f_desc").value.trim()
+  };
+
+  var i = -1;
+  local.items.forEach(function(x,k){ if(x.id === item.id) i = k; });
+  if(i >= 0) local.items[i] = item; else local.items.push(item);
+  saveLocal();
+  try{ localStorage.setItem(STORE_KEY+"-author", item.author); }catch(e){}
+
+  closeVeil($("veilEdit"));
+  render();
+  toast(state.editingId ? "直しました" : "追加しました");
+  state.editingId = null;
+});
+function fail(msg){ var e=$("err"); e.textContent = msg; e.className = "err on"; }
+
+function removeItem(id){
+  var it = allItems().filter(function(x){ return x.id===id; })[0];
+  if(!it) return;
+  if(!confirm("「" + it.title + "」を一覧から消します。よろしいですか？")) return;
+  local.items = local.items.filter(function(x){ return x.id !== id; });
+  if(isBase(id) && local.removed.indexOf(id) < 0) local.removed.push(id);
+  saveLocal(); render(); toast("消しました");
+}
+
+$("btnExport").addEventListener("click", function(){
+  $("f_dump").value = buildFile();
+  openVeil($("veilExport"));
+});
+function buildFile(){
+  var data = { site:(base.site || DEFAULT_DATA.site), categories:allCategories(), items:allItems() };
+  return "/* マンモス札幌 部活動ポータル 共有データ */\n"
+       + "/* 書き出し： " + today() + " */\n"
+       + "window.PORTAL_DATA = " + JSON.stringify(data, null, 2) + ";\n";
+}
+$("btnDownload").addEventListener("click", function(){
+  var blob = new Blob([buildFile()], {type:"text/javascript;charset=utf-8"});
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = "data.js";
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 400);
+  toast("data.js を保存しました");
+});
+$("btnCopy").addEventListener("click", function(){
+  var ta = $("f_dump"); ta.select(); ta.setSelectionRange(0, 999999);
+  try{ document.execCommand("copy"); toast("コピーしました"); }
+  catch(e){ toast("Ctrl+C でコピーしてください"); }
+});
+$("btnClear").addEventListener("click", function(){
+  if(!confirm("この端末のブラウザに保存した追加分を消します。\ndata.js に書き出した分は残ります。よろしいですか？")) return;
+  local = { items:[], categories:[], removed:[] };
+  saveLocal(); render(); toast("この端末の保存分を消しました");
+  $("f_dump").value = buildFile();
+});
+$("btnImport").addEventListener("click", function(){
+  var txt = $("f_dump").value;
+  var m = txt.match(/\{[\s\S]*\}/);
+  if(!m) return toast("読み取れませんでした");
+  var obj;
+  try{ obj = JSON.parse(m[0]); }catch(e){ return toast("形式が違うようです"); }
+  if(!obj || !Array.isArray(obj.items)) return toast("items が見つかりません");
+
+  var have = {};
+  allItems().forEach(function(it){ have[key(it)] = 1; });
+  var n = 0;
+  obj.items.forEach(function(it){
+    if(!it || !it.title) return;
+    if(have[key(it)]) return;
+    it.id = it.id || ("m-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2,6));
+    if(local.items.some(function(x){ return x.id===it.id; })) it.id += "x";
+    local.items.push(it); have[key(it)] = 1; n++;
+  });
+  (obj.categories||[]).forEach(function(c){
+    if(allCategories().indexOf(c) < 0) local.categories.push(c);
+  });
+  saveLocal(); render();
+  $("f_dump").value = buildFile();
+  toast(n ? (n + " 件を取り込みました") : "新しいものはありませんでした");
+});
+function key(it){ return (it.title||"") + " " + (it.href||""); }
+
+var toastTimer = null;
+function toast(msg){
+  var el = $("toast");
+  el.textContent = msg; el.classList.add("on");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ el.classList.remove("on"); }, 2200);
+}
+
+/* ---------------- 岩なだれで次のページへ ---------------- */
+var ROCK_COLORS = [
+  "linear-gradient(140deg,#7C8B98 0 44%,#3E4E5C 44%)",
+  "linear-gradient(140deg,#5E6E7C 0 46%,#283846 46%)",
+  "linear-gradient(140deg,#8A7A62 0 42%,#4A3F31 42%)",
+  "linear-gradient(140deg,#98A5AF 0 40%,#4F5F6D 40%)",
+  "linear-gradient(140deg,#6B5B47 0 48%,#33291F 48%)",
+  "linear-gradient(140deg,#46586A 0 45%,#1D2C39 45%)"
+];
+var sliding = false;
+function rnd(a,b){ return a + Math.random()*(b-a); }
+
+function rockslide(done){
+  var ov = document.createElement("div");
+  ov.className = "slide-ov";
+  var veil = document.createElement("div");
+  veil.className = "slide-veil";
+  ov.appendChild(veil);
+
+  /* 3波に分けて降らせる。後の波ほど数が少なく、小さい */
+  var waves = [
+    { n:22, d0:0,   d1:130, s0:26, s1:82 },   /* 先頭の大岩 */
+    { n:20, d0:110, d1:300, s0:18, s1:58 },   /* 本体 */
+    { n:14, d0:290, d1:520, s0:9,  s1:26 }    /* 落ち残りの小石 */
+  ];
+  waves.forEach(function(w){
+    for(var i=0;i<w.n;i++){
+      var r = document.createElement("span");
+      r.className = "rock r" + Math.floor(rnd(0,6));
+      r.style.left = rnd(-6,104) + "%";
+      r.style.setProperty("--sz",  Math.round(rnd(w.s0,w.s1)) + "px");
+      r.style.setProperty("--dur", Math.round(rnd(480,800)) + "ms");
+      r.style.setProperty("--dl",  Math.round(rnd(w.d0,w.d1)) + "ms");
+      r.style.setProperty("--rot", Math.round(rnd(-560,560)) + "deg");
+      r.style.setProperty("--dx",  Math.round(rnd(-70,70)) + "px");
+      r.style.setProperty("--rc",  ROCK_COLORS[Math.floor(rnd(0,ROCK_COLORS.length))]);
+      ov.appendChild(r);
+    }
+  });
+
+  /* 岩に混じって落ちる土けむり */
+  for(var j=0;j<12;j++){
+    var h = document.createElement("span");
+    h.className = "haze";
+    h.style.left = rnd(-8,102) + "%";
+    h.style.setProperty("--sz",  Math.round(rnd(70,190)) + "px");
+    h.style.setProperty("--dur", Math.round(rnd(640,980)) + "ms");
+    h.style.setProperty("--dl",  Math.round(rnd(0,340)) + "ms");
+    h.style.setProperty("--rot", "0deg");
+    h.style.setProperty("--dx",  Math.round(rnd(-40,40)) + "px");
+    h.style.setProperty("--rc",  j%3 ? "rgba(158,140,110,.5)" : "rgba(245,238,223,.36)");
+    ov.appendChild(h);
+  }
+
+  document.body.appendChild(ov);
+  var fired = false;
+  var go = function(){ if(!fired){ fired = true; done(); } };
+  setTimeout(go, 980);
+  /* 遷移できなかった時の後始末 */
+  setTimeout(function(){
+    if(ov.parentNode){ ov.parentNode.removeChild(ov); }
+    sliding = false;
+  }, 6000);
+}
+
+document.addEventListener("click", function(e){
+  var a = e.target.closest ? e.target.closest("a.cardlink") : null;
+  if(!a) return;
+  if(a.target === "_blank") return;                  /* 別タブは即開く */
+  if(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+  var href = a.getAttribute("href");
+  if(!href || href === "#"){ e.preventDefault(); return; }
+  e.preventDefault();
+  if(sliding) return;
+  if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+    window.location.href = href; return;
+  }
+  sliding = true;
+  rockslide(function(){ window.location.href = href; });
+});
+
+/* アイコン画像があれば差し替え */
+(function(){
+  var img = new Image();
+  img.onload = function(){
+    var b = $("brand"), s = b.querySelector("svg");
+    if(s){ img.alt=""; b.replaceChild(img, s); }
+  };
+  img.src = "icon-mammoth.png";
+})();
+
+render();
+})();
+</script>
+</body>
+</html>
